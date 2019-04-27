@@ -1,0 +1,219 @@
+﻿using System.ComponentModel;
+using System.Text;
+using System.Threading.Tasks;
+
+                //colr = picture.GetPixel(a, b);
+                //if (colr.Name == "ffffffff")  // белый
+                //{
+                //    massiv[a, b] = 0;
+                //}
+
+                /*StringBuilder bld = new StringBuilder();
+                foreach (string str in paths_list.OrderBy(c => c)) // упорядочивание файлов по алфавиту и счёту
+                {
+                    bld.Append(str);
+                    bld.Append(Environment.NewLine);
+                }*/
+
+                //paths_list.Clear();
+                //names_list.Clear();
+
+                //comboBox1.Items.Add(str);
+            //get_ndvi_range();
+			        
+        /*private void enable_ndvi_elements()
+        {
+            comboBox1.Visible = false;
+            comboBox1.Enabled = false;
+            label2.Visible = false;
+            comboBox2.Visible = false;
+            comboBox2.Enabled = false;
+
+            Save_as.Enabled = false;
+            Save_picture.Enabled = false;
+
+            label1.Visible = true;
+            label1.Text = "Название файла: " + file_name;
+            label1.Location = new Point(ClientSize.Width - 179, 25);
+            
+            label4.Visible = true;
+            label4.Location = new Point(ClientSize.Width - 179, label1.Location.Y + 18);
+
+            numUp.Visible = true;
+            numUp.Enabled = true;
+            numUp.Location = new Point(ClientSize.Width - 179, label4.Location.Y + 18);
+
+            label5.Visible = true;
+            label5.Location = new Point(ClientSize.Width - 179, numUp.Location.Y + 25);
+
+            numDown.Visible = true;
+            numDown.Enabled = true;
+            numDown.Location = new Point(ClientSize.Width - 179, label5.Location.Y + 18);
+
+            label3.Visible = true;
+            label3.Location = new Point(ClientSize.Width - 179, numDown.Location.Y + 25);
+
+            button1.Visible = true;
+            button1.Enabled = true;
+            button1.Location = new Point(ClientSize.Width - button1.Width - 8, label3.Location.Y + 18);
+        }
+
+        private void enable_rgb_elements()
+        {
+            comboBox1.Visible = false;
+            comboBox1.Enabled = false;
+            //label3.Visible = false;
+
+            Save_as.Enabled = true;
+            Save_picture.Enabled = true;
+
+            label1.Visible = true;
+            label1.Text = "Название файла: " + file_name;
+            label1.Location = new Point(ClientSize.Width - 179, 25);
+
+            label2.Visible = true;
+            label2.Location = new Point(ClientSize.Width - 179, label1.Location.Y + 18);
+
+            comboBox2.Visible = true;
+            comboBox2.Enabled = true;
+            comboBox2.Location = new Point(ClientSize.Width - 179, label2.Location.Y + 18);
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+        
+        private void button_change_elements()
+        {
+            label2.Visible = true;
+            if (comboBox1.Enabled)
+                label2.Location = new Point(ClientSize.Width - 129, comboBox1.Location.Y + 26);
+            else
+                label2.Location = new Point(ClientSize.Width - 179, label1.Location.Y + 18);
+
+            comboBox2.Visible = true;
+            comboBox2.Enabled = true;
+            if (comboBox1.Enabled)
+                comboBox2.Location = new Point(ClientSize.Width - 129, label2.Location.Y + 18);
+            else
+                comboBox2.Location = new Point(ClientSize.Width - 179, label2.Location.Y + 18);
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            label3.Visible = true;
+            if (comboBox1.Enabled)
+                label3.Location = new Point(ClientSize.Width - 129, comboBox2.Location.Y + 26); // 455, 113
+            else
+                label3.Location = new Point(ClientSize.Width - 179, comboBox2.Location.Y + 26);
+
+            button1.Location = new Point(ClientSize.Width - button1.Width - 8, label3.Location.Y + 18);
+        }*/
+
+            //if (file_sorting[comboBox1.SelectedIndex])
+            //{
+                /*label4.Visible = true;
+                label4.Location = new Point(ClientSize.Width - 129, comboBox1.Location.Y + 26);
+
+                numUp.Visible = true;
+                numUp.Enabled = true;
+                numUp.Location = new Point(ClientSize.Width - 129, label4.Location.Y + 18);
+
+                label5.Visible = true;
+                label5.Location = new Point(ClientSize.Width - 129, numUp.Location.Y + 25);
+
+                numDown.Visible = true;
+                numDown.Enabled = true;
+                numDown.Location = new Point(ClientSize.Width - 129, label5.Location.Y + 18);
+
+                label3.Visible = true;
+                label3.Location = new Point(ClientSize.Width - 129, numDown.Location.Y + 25); // 455, 113
+
+                button1.Visible = true;
+                button1.Enabled = true;
+                button1.Location = new Point(ClientSize.Width - button1.Width - 8, label3.Location.Y + 18);*/
+            /*}
+            else
+            {
+                //label3.Visible = false;
+                //button1.Visible = false;
+                //button1.Enabled = false;
+                
+                label1.Location = new Point(ClientSize.Width - 129, 25);
+                
+                comboBox1.Location = new Point(ClientSize.Width - 129, label1.Location.Y + 18);
+
+                label2.Visible = true;
+                label2.Text = "Выберите местность:";
+                label2.Location = new Point(ClientSize.Width - 129, comboBox1.Location.Y + 26);
+
+                comboBox2.Visible = true;
+                comboBox2.Enabled = true;
+                comboBox2.Location = new Point(ClientSize.Width - 129, label2.Location.Y + 18);
+                comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            }*/
+
+                //label3.Visible = false;
+                //button1.Visible = false;
+                //button1.Enabled = false;
+
+        /*
+        private void Open_ndvi_Click(object sender, EventArgs e)
+        {
+            get_file(false);
+
+            if (file_path != "")
+            {
+                enable_ndvi_elements();
+
+                pictureBox1.Image = new Bitmap(file_path);
+                picturebox_resize();
+            }
+        }
+
+        private void Open_rgb_Click(object sender, EventArgs e)
+        {
+            get_file(false);
+
+            if (file_path != "")
+            {
+                enable_rgb_elements();
+                
+                pictureBox1.Image = new Bitmap(file_path);
+                picturebox_resize();
+            }
+        }*/
+        // написать
+        /*private void Button1_Click(object sender, EventArgs e)
+        {
+            // Кнопка вызывается с 2 мест:
+            // 1. поясни за ndvi из списка
+            // 2. поясни за ndvi файл
+            get_file(true);
+
+            //pictureBox1.Image = new Bitmap(rgb_path);
+            //picturebox_resize();
+
+            button_change_elements();
+        }*/
+
+
+            //Array.Resize(ref input_layer, input_count);
+            //Array.Resize(ref f_hidden_layer, hidden_count);
+            //Array.Resize(ref output_layer, input_count);
+            //Array.Resize(ref taken_pic, neurons_count);
+            //Array.Resize(ref weights, neurons_count);
+			//weights = (double[,])ResizeArray(weights, new int[] { hidden_count, input_count });
+			
+                //string rgb_name = ;
+                //string ndvi_name = ;
+                //Color pix_color = new Color();
+                //Bitmap img = new Bitmap(paths_list[comboBox1.SelectedIndex]);
+                
+				
+
+        /*private void fill_picture(int[,,] massive, int start_x, int start_y, int size)
+        {
+            for(int j = start_y; j < size + start_y; j++)
+            {
+                for (int i = start_x; i < size + start_x; i++)
+                {
+                    test.SetPixel(i, j, Color.FromArgb(255, l_pic[l, d, 0], l_pic[l, d, 1], l_pic[l, d, 2]));
+                }
+            }
+        }*/
