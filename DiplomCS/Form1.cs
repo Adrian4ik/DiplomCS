@@ -19,12 +19,7 @@ namespace DiplomCS
     public partial class Form1 : Form
     {
         private const int rect_size = 5, // размер изображения, посылаемого на обработку нейронной сети, по умолчанию: 5, т.е. изображение 5х5
-                    c_solution = 3; // способы ускорения работы программы:
-                                    // 1 - доработанные GetPixel и SetPixel
-                                    // 2 - указатели
-                                    // 3 - указатели + LockBits (по умолчанию)
-                                    // 4 - указатели + LockBits - массивы
-                                    // 5 - assembler
+                    c_solution = 3;
         private int i_count,
                     h_count,
                     files_count;

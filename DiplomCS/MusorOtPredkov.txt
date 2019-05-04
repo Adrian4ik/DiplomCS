@@ -684,3 +684,12 @@ using System.Threading.Tasks;
                         res[2, h, w] = (byte)arr[l, d, 2];
                     }
                 }*/
+
+
+
+// способы ускорения работы программы:
+// 1 - доработанные GetPixel и SetPixel
+// 2 - указатели
+// 3 - указатели + LockBits (по умолчанию)
+// 4 - указатели + LockBits - массивы
+// 5 - assembler
