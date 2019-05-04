@@ -124,7 +124,6 @@
             this.Save_as.Name = "Save_as";
             this.Save_as.Size = new System.Drawing.Size(23, 22);
             this.Save_as.Text = "Сохранить как...";
-            this.Save_as.Click += new System.EventHandler(this.Save_as_Click);
             // 
             // Save_picture
             // 
@@ -135,7 +134,6 @@
             this.Save_picture.Name = "Save_picture";
             this.Save_picture.Size = new System.Drawing.Size(23, 22);
             this.Save_picture.Text = "Сохранить";
-            this.Save_picture.Click += new System.EventHandler(this.Save_picture_Click);
             // 
             // pictureBox1
             // 
@@ -200,7 +198,6 @@
             this.comboBox2.Size = new System.Drawing.Size(121, 21);
             this.comboBox2.TabIndex = 0;
             this.comboBox2.Visible = false;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.ComboBox2_SelectedIndexChanged);
             // 
             // pictureBox2
             // 

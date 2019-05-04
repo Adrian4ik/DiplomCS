@@ -217,3 +217,421 @@ using System.Threading.Tasks;
                 }
             }
         }*/
+
+
+
+		//fixed (byte* _res = res)
+                //{
+                    //int start_pos = start_y * width + start_x;
+                        //r_layer = 0,
+                        //g_layer = width * height,
+                        //b_layer = 2 * width * height;
+
+                    //byte* curpos = (byte*)bd.Scan0 + start_y * bd.Stride; // (width * 3 + 1)
+                        //_r = _res + r_layer,
+                        //_g = _res + g_layer,
+                        //_b = _res + b_layer; // + start_pos
+
+                    for (int h = start_y, d = 0; h < end_y; h++, d++)
+                    {
+                        byte* curpos = (byte*)bd.Scan0 + h * bd.Stride;
+                        for (int w = start_x, l = 0; w < end_x; w++, l++, curpos += 3)
+                        {
+                            curpos[start_x * 3 + 0] = (byte)arr[l, d, 2]; // *_b++
+                            curpos[start_x * 3 + 1] = (byte)arr[l, d, 1]; // *_g++
+                            curpos[start_x * 3 + 2] = (byte)arr[l, d, 0]; // *_r++
+                        } // (width * 3 + 1)
+                    }
+                //}
+
+
+				
+        // доработать
+        #region 1 способ (доработанные GetPixel и SetPixel)
+        private int[,,] MGetPixel(Bitmap bmp, int start_x, int start_y)
+        {
+            DirectBitmap dbm = new DirectBitmap(bmp);
+            int[,,] res = new int[rect_size, rect_size, 3];
+
+            int l = 0, d = 0;
+            for (int j = start_y; j < rect_size + start_y; j++)
+            {
+                for (int i = start_x; i < rect_size + start_x; i++)
+                {
+                    res[l, d, 0] = dbm.GetPixel(j, i).R;
+                    res[l, d, 1] = dbm.GetPixel(j, i).G;
+                    res[l, d, 2] = dbm.GetPixel(j, i).B;
+                    l++;
+                }
+                l = 0;
+                d++;
+            }
+            dbm.Dispose();
+
+            return res;
+        }
+
+        private Bitmap MSetPixel(Bitmap bmp, int[,,] arr, int start_x, int start_y)
+        {
+            Color clr;
+            DirectBitmap dbm = new DirectBitmap(bmp);
+
+            int l = 0, d = 0;
+            for (int j = start_y; j < rect_size + start_y; j++)
+            {
+                for (int i = start_x; i < rect_size + start_x; i++)
+                {
+                    clr = Color.FromArgb(255, arr[l, d, 0], arr[l, d, 1], arr[l, d, 2]);
+                    dbm.SetPixel(j, i, clr);
+                    l++;
+                }
+                l = 0;
+                d++;
+            }
+            dbm.Dispose();
+
+            return bmp;
+        }
+        #endregion 1 способ (доработанные GetPixel и SetPixel)
+
+        #region 2 способ (указатели)
+        /*unsafe {
+            var oneBits = one.LockBits(new Rectangle(0, 0, one.Width, one.Height), ImageLockMode.ReadOnly, one.PixelFormat);
+            var twoBits = two.LockBits(new Rectangle(0, 0, two.Width, two.Height), ImageLockMode.ReadOnly, two.PixelFormat);
+            var thrBits = thr.LockBits(new Rectangle(0, 0, thr.Width, thr.Height), ImageLockMode.WriteOnly, thr.PixelFormat);
+
+            int padding = twoBits.Stride - (two.Width * sizeof(Pixel));
+
+            int width = two.Width;
+            int height = two.Height;
+
+            Parallel.For(0, one.Width * one.Height, i => {
+                Pixel* pxOne = (Pixel*)((byte*)oneBits.Scan0 + i * sizeof(Pixel));
+
+                byte* ptr = (byte*)twoBits.Scan0;
+
+                for (int j = 0; j < height; j++) {
+                    for (int k = 0; k < width; k++) {
+                        Pixel* pxTwo = (Pixel*)ptr;
+                        if (pxOne->Equals(*pxTwo)) {
+                            Pixel* pxThr = (Pixel*)((byte*)thrBits.Scan0 + i * sizeof(Pixel));
+                            pxThr->Alpha = pxThr->Red = pxThr->Green = pxThr->Blue = 0xFF;
+                        }
+                        ptr += sizeof(Pixel);
+                    }
+                    ptr += padding;
+                }
+            });
+
+            one.UnlockBits(oneBits);
+            two.UnlockBits(twoBits);
+            thr.UnlockBits(thrBits);
+        }*/
+        #endregion 2 способ (указатели)
+		
+        #region 4 способ (указатели + LockBits - массивы)
+        /*
+         */
+        #endregion 4 способ (указатели + LockBits - массивы)
+
+        #region 5 способ (assembler)
+        /*
+         */
+        #endregion 5 способ (assembler)
+
+		
+
+    public unsafe class UnsafeBitmap
+    {
+        Bitmap bmp;
+        int width;
+        BitmapData bitmapData = null;
+        byte* pBase = null;
+
+        public UnsafeBitmap(Bitmap bmp)
+        {
+            this.bmp = new Bitmap(bmp);
+        }
+
+        public UnsafeBitmap(int width, int height)
+        {
+            this.bmp = new Bitmap(width, height);
+        }
+
+        public void Dispose()
+        {
+            bmp.Dispose();
+        }
+
+        public Bitmap Bitmap
+        {
+            get
+            {
+                return bmp;
+            }
+        }
+
+        private Point PixelSize
+        {
+            get
+            {
+                GraphicsUnit unit = GraphicsUnit.Pixel;
+                RectangleF bounds = bmp.GetBounds(ref unit);
+
+                return new Point((int)bounds.Width, (int)bounds.Height);
+            }
+        }
+
+        public void LockBitmap()
+        {
+            GraphicsUnit unit = GraphicsUnit.Pixel;
+            RectangleF boundsF = bmp.GetBounds(ref unit);
+            Rectangle bounds = new Rectangle((int)boundsF.X, (int)boundsF.Y, (int)boundsF.Width, (int)boundsF.Height);
+
+            //width = (int)boundsF.Width * sizeof(PixelData);
+        }
+    }
+
+    public class DirectBitmap : IDisposable
+    {
+        public Bitmap Bitmap { get; private set; }
+        public Int32[] Bits { get; private set; }
+        public bool Disposed { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        protected GCHandle BitsHandle { get; private set; }
+
+        public DirectBitmap(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            Bits = new int[width * height];
+            BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+            Bitmap = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+        }
+        public DirectBitmap(Bitmap bmp)
+        {
+
+        }
+
+        public void SetPixel(int x, int y, Color colour)
+        {
+            int index = x + (y * Width);
+            int col = colour.ToArgb();
+
+            Bits[index] = col;
+        }
+
+        public Color GetPixel(int x, int y)
+        {
+            int index = x + (y * Width);
+            int col = Bits[index];
+            Color result = Color.FromArgb(col);
+
+            return result;
+        }
+
+        public Bitmap ToBmp()
+        {
+            return Bitmap;
+        }
+
+        public void Dispose()
+        {
+            if (Disposed)
+                return;
+            Disposed = true;
+            Bitmap.Dispose();
+            BitsHandle.Free();
+        }
+    }
+
+
+	
+        // пусто
+        private void Save_as_Click(object sender, EventArgs e)
+        {
+
+        }
+        // пусто
+        private void Save_picture_Click(object sender, EventArgs e)
+        {
+
+        }
+        // пусто
+        private void ComboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //if (comboBox2.SelectedIndex > -1)
+            switch (comboBox2.SelectedIndex)
+            {
+                case 0:
+                    // 0. исходное изображение
+                    pictureBox1.Image = new Bitmap(files_array[0, comboBox1.SelectedIndex]);
+                    Pictures_change_elements();
+                    break;
+                case 1:
+                    // 1. густая растительность         ~ 0.70
+                    break;
+                case 2:
+                    // 2. разражённая растительность    ~ 0.50
+                    break;
+                case 3:
+                    // 3. открытая почва                ~ 0.25
+                    break;
+                case 4:
+                    // 4. облака                        ~ 0.00
+                    break;
+                case 5:
+                    // 5. снег и лёд                    ~-0.05
+                    break;
+                case 6:
+                    // 6. вода                          ~-0.25
+                    break;
+                case 7:
+                    // 7. искусственные материалы       ~-0.50
+                    break;
+            }
+        }
+
+
+		
+        private void Test_setpixel()
+        {
+            if (files_array != null)
+            {
+                Random rnd = new Random();
+                //rnd.Next(0, 20)
+                Bitmap pic_rgb = new Bitmap(files_array[0, 0]);
+
+                int wd = pic_rgb.Width,
+                    hd = pic_rgb.Height,
+                    end_x = wd - rect_size + 1,
+                    end_y = hd - rect_size + 1;
+
+                //Color[,] array = new Color[wd, hd];
+                Bitmap res = new Bitmap(wd, hd);
+
+                for (int j = 0; j < end_y; j++)
+                {
+                    for (int i = 0; i < end_x; i++)
+                    {
+                        res = LBSetPixel(res, LBGetPixel(pic_rgb, i, j), i, j);
+                    }
+                }
+
+                pictureBox1.Image = pic_rgb;
+                pictureBox2.Image = res;
+                Pictures_change_elements();
+            }
+        }
+
+
+		
+            switch (iteration)
+            {
+                case 0:
+                    for (int i = 0; i < hidden_count; i++)
+                        m_first_hidden_layer[i] = Sigmoid(first_hidden_layer[i]);
+                        //m_first_hidden_layer[i] = 45 * (m_first_hidden_layer[i] - 0.53);
+                    iteration++;
+                    break;
+                case 1:
+                    for (int i = 0; i < input_count; i++)
+                        m_output_layer[i] = Sigmoid(output_layer[i]);
+                    iteration = 0;
+                    break;
+            }
+
+
+			
+            double[] m_arr = arr;
+
+            for (int i = 0; i < size; i++)
+                m_arr[i] = Sigmoid(arr[i]);
+            return m_arr;
+
+
+			
+        private void Change_weights_1() // ~20 мс
+        {
+            for (int j = 0; j < hidden_count; j++)
+                for (int i = 0; i < input_count; i++)
+                    weights_1[j, i] = weights_1[j, i] - input_layer[i] * weights_1_delta[j] * learning_rate;
+        }
+
+        private void Change_output_weights() // ~10 мс
+        {
+            for (int j = 0; j < hidden_count; j++)
+                for (int i = 0; i < input_count; i++)
+                    weights_o[j, i] = weights_o[j, i] - m_first_hidden_layer[j] * weights_o_delta[i] * learning_rate;
+        }
+
+
+		
+        private void Get_w1_delta()
+        {
+            for (int i = 0; i < hidden_count; i++)
+                weights_1_delta[i] = error[i] * m_first_hidden_layer[i] * (1 - m_first_hidden_layer[i]);
+        }
+
+        private void Get_outputw_delta()
+        {
+            for (int i = 0; i < input_count; i++)
+                weights_o_delta[i] = error[i] * m_output_layer[i] * (1 - m_output_layer[i]);
+        }
+
+
+
+                //Get_outputw_delta();
+                //Change_output_weights();
+                //Get_w1_delta();
+                //Change_weights_1();
+
+
+
+        private void Fill_hidden_layer() // ~10 мс
+        {
+            for (int j = 0; j < hidden_count; j++)
+                for (int i = 0; i < input_count; i++)
+                    first_hidden_layer[j] = first_hidden_layer[j] + input_layer[i] * weights_1[j, i];
+        }
+
+        private void Fill_output_layer() // ~10 мс
+        {
+            for (int j = 0; j < hidden_count; j++)
+                for (int i = 0; i < input_count; i++)
+                    output_layer[i] = output_layer[i] + m_first_hidden_layer[j] * weights_o[j, i];
+        }
+
+		
+
+        private void F_activ8()
+        {
+            switch (iteration)
+            {
+                case 0:
+                    m_first_hidden_layer = Activation_function(first_hidden_layer, hidden_count);
+                    iteration++;
+                    break;
+                case 1:
+                    m_output_layer = Activation_function(output_layer, input_count);
+                    iteration = 0;
+                    break;
+            }
+        }
+
+
+		
+        private static Array ResizeArray(Array arr, int[] newSizes)
+        {
+            // Стандартный метод с официального сайта //
+            if (newSizes.Length != arr.Rank)
+                throw new ArgumentException("arr must have the same number of dimensions " +
+                                            "as there are elements in newSizes", "newSizes");
+
+            var temp = Array.CreateInstance(arr.GetType().GetElementType(), newSizes);
+            int length = arr.Length <= temp.Length ? arr.Length : temp.Length;
+            Array.ConstrainedCopy(arr, 0, temp, 0, length);
+            return temp;
+        }
