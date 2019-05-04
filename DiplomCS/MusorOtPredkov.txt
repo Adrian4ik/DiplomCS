@@ -635,3 +635,52 @@ using System.Threading.Tasks;
             Array.ConstrainedCopy(arr, 0, temp, 0, length);
             return temp;
         }
+
+
+		
+        /*struct Pixel : IEquatable<Pixel>
+        {
+            public byte Blue;
+            public byte Green;
+            public byte Red;
+            public byte Alpha;
+
+            public bool Equals(Pixel other)
+            {
+                return Red == other.Red && Green == other.Green && Blue == other.Blue && Alpha == other.Alpha;
+            }
+        }*/
+
+        /*struct Picturess
+        {
+            string[,] pics;
+
+            string Path { get; set; }
+            string Name { get; set; }
+            int Num { get; set; }
+            int Count { get; set; }
+
+            void Set_count()
+            {
+                pics = new string[2, Count];
+            }
+
+            void Set_path(int i)
+            {
+
+            }
+        }*/
+
+
+		
+            //byte[,,] res = new byte[3, height, width];
+
+                /*for (int h = start_y, d = 0; h < end_y; h++, d++)
+                {
+                    for (int w = start_x, l = 0; w < end_x; w++, l++)
+                    {
+                        res[0, h, w] = (byte)arr[l, d, 0];
+                        res[1, h, w] = (byte)arr[l, d, 1];
+                        res[2, h, w] = (byte)arr[l, d, 2];
+                    }
+                }*/

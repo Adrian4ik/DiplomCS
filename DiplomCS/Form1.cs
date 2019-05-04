@@ -18,39 +18,6 @@ namespace DiplomCS
 {
     public partial class Form1 : Form
     {
-        /*struct Pixel : IEquatable<Pixel>
-        {
-            public byte Blue;
-            public byte Green;
-            public byte Red;
-            public byte Alpha;
-
-            public bool Equals(Pixel other)
-            {
-                return Red == other.Red && Green == other.Green && Blue == other.Blue && Alpha == other.Alpha;
-            }
-        }*/
-
-        /*struct Picturess
-        {
-            string[,] pics;
-
-            string Path { get; set; }
-            string Name { get; set; }
-            int Num { get; set; }
-            int Count { get; set; }
-
-            void Set_count()
-            {
-                pics = new string[2, Count];
-            }
-
-            void Set_path(int i)
-            {
-
-            }
-        }*/
-
         private const int rect_size = 5, // размер изображения, посылаемого на обработку нейронной сети, по умолчанию: 5, т.е. изображение 5х5
                     c_solution = 3; // способы ускорения работы программы:
                                     // 1 - доработанные GetPixel и SetPixel
@@ -80,6 +47,7 @@ namespace DiplomCS
                 Recreate_weights();
         }
 
+        #region Preprocessing
         private void Recreate_weights()
         {
             w1 = new double[h_count, i_count];
@@ -303,16 +271,14 @@ namespace DiplomCS
 
                     pictureBox1.Image = pic_rgb;
                     pictureBox2.Image = pic_ndvi;
-
-                    if (pic_ndvi != null)
-                        Rects_from_pic(pic_rgb, pic_ndvi);
-                    else
-                        Rects_from_pic(pic_rgb);
+                
+                    Rects_from_pic(pic_rgb, pic_ndvi);
                 }
 
             Pictures_change_elements();
         }
-        
+        #endregion Preprocessing
+
         public unsafe int[,,] LBGetPixel(Bitmap bmp, int start_x, int start_y)
         {
             int width = bmp.Width, height = bmp.Height;
@@ -369,7 +335,6 @@ namespace DiplomCS
         public unsafe Bitmap LBSetPixel(Bitmap bmp, int[,,] arr, int start_x, int start_y)
         {
             int width = bmp.Width, height = bmp.Height;
-            byte[,,] res = new byte[3, height, width];
 
             BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
@@ -377,16 +342,6 @@ namespace DiplomCS
             {
                 int end_x = start_x + rect_size,
                     end_y = start_y + rect_size;
-
-                /*for (int h = start_y, d = 0; h < end_y; h++, d++)
-                {
-                    for (int w = start_x, l = 0; w < end_x; w++, l++)
-                    {
-                        res[0, h, w] = (byte)arr[l, d, 0];
-                        res[1, h, w] = (byte)arr[l, d, 1];
-                        res[2, h, w] = (byte)arr[l, d, 2];
-                    }
-                }*/
 
                 for (int h = start_y, d = 0; h < end_y; h++, d++)
                 {
@@ -412,6 +367,11 @@ namespace DiplomCS
             int wd = pic_rgb.Size.Width,
                 hd = pic_rgb.Size.Height;
 
+            int[] rgb_res = new int[i_count],
+                  ndvi_res = new int[i_count];
+            int[,,] s_argb = new int[rect_size, rect_size, 3],
+                    s_ndvi = new int[rect_size, rect_size, 3];
+
             Bitmap taken_rgb = new Bitmap(wd, hd);
             Bitmap taken_ndvi = new Bitmap(wd, hd);
             Bitmap taken_prec = new Bitmap(wd, hd);
@@ -420,107 +380,51 @@ namespace DiplomCS
             w2 = Serializer.Load_w(i_count, h_count, "weights02.bin");
 
             for (int j = 0; j < hd - rect_size; j++)
-            {
                 for (int i = 0; i < wd - rect_size; i++)
                 {
-                    int[] rgb_res = new int[i_count];
-                    int[] ndvi_res = new int[i_count];
-                    int[,,] s_argb = new int[rect_size, rect_size, 3];
-                    int[,,] s_ndvi = new int[rect_size, rect_size, 3];
-
-                    /*switch (c_solution)
+                    if(pic_ndvi != null)
                     {
-                        case 1:
-                            //s_argb = MGetPixel(pic_rgb, i, j);
-                            //s_ndvi = MGetPixel(pic_ndvi, i, j);
-                            break;
-                        case 2:
-                            break;
-                        case 3:*/
-                            s_argb = LBGetPixel(pic_rgb, i, j);
-                            s_ndvi = LBGetPixel(pic_ndvi, i, j);
-                            /*break;
-                        case 4:
-                            break;
-                        case 5:
-                            break;
-                    }*/
-                    ;
+                        s_argb = LBGetPixel(pic_rgb, i, j);
+                        s_ndvi = LBGetPixel(pic_ndvi, i, j);
+                    }
 
                     Give_data(s_argb, s_ndvi);
-                    ndvi_res = Nn.Analyse();
-                    w1 = Nn.Return_weights(1);
-                    w2 = Nn.Return_weights(0);
-                    rgb_res = Fill_1dim_array(s_argb);
+                    ndvi_res = Nn.Analysis();
 
+                    if (pic_ndvi != null)
+                    {
+                        w1 = Nn.Return_weights(1);
+                        w2 = Nn.Return_weights(0);
+                    }
+
+                    rgb_res = Fill_1dim_array(s_argb);
                     taken_ndvi = Paint_ndvi(taken_ndvi, ndvi_res, i, j);
                     taken_rgb = Cut_rgb_image(taken_rgb, rgb_res, ndvi_res, i, j);
                 }
-            }
 
             Serializer.Save("weights01.bin", w1);
             Serializer.Save("weights02.bin", w2);
 
-            //taken_prec = Calculate_precision((Bitmap)pictureBox2.Image, taken_ndvi);
             pictureBox3.Image = taken_rgb;
             pictureBox4.Image = taken_ndvi;
-            //pictureBox5.Image = taken_prec;
-        }
-        
-        private void Rects_from_pic(Bitmap pic_rgb)
-        {
-            int wd = pic_rgb.Size.Width,
-                hd = pic_rgb.Size.Height;
 
-            Bitmap taken_argb = new Bitmap(wd, hd);
-            Bitmap taken_ndvi = new Bitmap(wd, hd);
-
-            w1 = Serializer.Load_w(i_count, h_count, "weights01.bin");
-            w2 = Serializer.Load_w(i_count, h_count, "weights02.bin");
-
-            for (int j = 0; j < hd - rect_size; j++)
+            if (pic_ndvi != null)
             {
-                for (int i = 0; i < wd - rect_size; i++)
-                {
-                    int[] rgb_res = new int[i_count];
-                    int[] ndvi_res = new int[i_count];
-                    
-                    /*switch (c_solution)
-                    {
-                        case 1:
-                            //Give_data(MGetPixel(pic_rgb, i, j));
-                            break;
-                        case 2:
-                            break;
-                        case 3:*/
-                            Give_data(LBGetPixel(pic_rgb, i, j));
-                            /*break;
-                        case 4:
-                            break;
-                        case 5:
-                            break;
-                    }*/
-                    ndvi_res = Nn.Analyse();
-
-                    taken_ndvi = Paint_ndvi(taken_ndvi, ndvi_res, i, j);
-                    taken_argb = Cut_rgb_image(taken_argb, rgb_res, ndvi_res, i, j);
-                }
+                //taken_prec = Calculate_precision((Bitmap)pictureBox2.Image, taken_ndvi);
+                //pictureBox5.Image = taken_prec;
             }
-
-            pictureBox3.Image = taken_argb;
-            pictureBox4.Image = taken_ndvi;
         }
 
         private void Give_data(int[,,] rgb, int[,,] ndvi)
         {
-            for (int j = 0; j < rect_size; j++)
+            /*for (int j = 0; j < rect_size; j++)
                 for (int i = 0; i < rect_size; i++)
-                    if (ndvi[i, j, 2] > 80 || (ndvi[i, j, 0] == 0 && ndvi[i, j, 0] == 0 && ndvi[i, j, 0] == 0)) // ndvi[i, j, 0] < 150 &&
+                    if (ndvi[i, j, 2] > 80) // ndvi[i, j, 0] < 150 &&
                     {
                         ndvi[i, j, 0] = 0;
                         ndvi[i, j, 1] = 0;
                         ndvi[i, j, 2] = 0;
-                    }
+                    }*/
 
             Nn.Take_rgb(i_count, h_count, Fill_1dim_array(rgb), w1, w2);
             Nn.Take_ndvi(Fill_1dim_array(ndvi));
@@ -575,7 +479,7 @@ namespace DiplomCS
 
             return res;
         }
-        //
+        // изменить
         private Bitmap Calculate_precision(Bitmap ndvi, Bitmap ans)
         {
             int wd = ndvi.Width,
@@ -596,6 +500,8 @@ namespace DiplomCS
 
             return res;
         }
+
+        //Многозадачные функции-----------------//
 
         private int[] Fill_1dim_array(int[,,] arr)
         {
@@ -662,11 +568,8 @@ namespace DiplomCS
 
                 pictureBox1.Image = pic_rgb;
                 pictureBox2.Image = pic_ndvi;
-
-                if (pic_ndvi != null)
-                    Rects_from_pic(pic_rgb, pic_ndvi);
-                else
-                    Rects_from_pic(pic_rgb);
+                
+                Rects_from_pic(pic_rgb, pic_ndvi);
 
                 //comboBox2.SelectedIndex = 0;
                 Combobox_change_elements();
@@ -741,7 +644,7 @@ namespace DiplomCS
             has_answer = true;
         }
 
-        public int[] Analyse()
+        public int[] Analysis()
         {
             bool it = true;
 
@@ -833,11 +736,11 @@ namespace DiplomCS
         private void Get_weights_delta(bool it)
         {
             if (it)
-                for (int i = 0; i < input_count; i++)
-                    weights_o_delta[i] = error[i] * m_output_layer[i] * (1 - m_output_layer[i]);
-            else
                 for (int i = 0; i < hidden_count; i++)
                     weights_1_delta[i] = error[i] * m_first_hidden_layer[i] * (1 - m_first_hidden_layer[i]);
+            else
+                for (int i = 0; i < input_count; i++)
+                    weights_o_delta[i] = error[i] * m_output_layer[i] * (1 - m_output_layer[i]);
         }
         
         private void Change_weights(bool it) // ~10 мс / ~20 мс
