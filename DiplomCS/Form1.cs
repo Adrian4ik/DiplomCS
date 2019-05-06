@@ -591,7 +591,7 @@ namespace DiplomCS
         private int[] taken_ans,
                       output_data;
 
-        private const double learning_rate = 0.01; /*precision*/
+        private const double learning_rate = 0.7; /*precision*/
 
         private double[] input_layer,
                          first_hidden_layer,
@@ -604,7 +604,9 @@ namespace DiplomCS
                        m_output_layer,
                          error,
                          weights_1_delta,
-                         weights_o_delta;
+                         weights_o_delta,
+                         w1,
+                         wo;
 
         private double[,] weights_1,
                           //weights_2,
@@ -645,7 +647,7 @@ namespace DiplomCS
 
             for (int i = 0; i < 2; i++)
             {
-                Fill_next_layer(it); // заполняется слой
+                Fill_next_layer(it); // заполняется слой, выполняется ~10 мс
                 S_activation_function(it); // мод. слой заполняется сигмоидом этого же слоя
                 if (it)
                     it = false;
@@ -722,9 +724,12 @@ namespace DiplomCS
                 error = new double[input_count];
 
                 for (int i = 0; i < input_count; i++)
-                    error[i] = m_output_layer[i] - ((double)taken_ans[i] / 255); // Sigmoid((double)taken_ans[i] / 255)
-                    //error[i] = Sigmoid(m_output_data[i] - taken_ans[i]);
-                    //precision = precision + error[i];
+                    error[i] = m_output_layer[i] - (taken_ans[i] / 255.0);
+                //((double)taken_ans[i] / 255) - m_output_layer[i]
+                //m_output_layer[i] - ((double)taken_ans[i] / 255)
+                //m_output_layer[i] - Sigmoid((double)taken_ans[i] / 255)
+                //error[i] = Sigmoid(m_output_data[i] - taken_ans[i]);
+                //precision = precision + error[i];
             }
         }
 
@@ -754,10 +759,15 @@ namespace DiplomCS
         {
             if(it)
                 for (int i = 0; i < hidden_count; i++)
+                {
                     m_first_hidden_layer[i] = Sigmoid(first_hidden_layer[i]);
+                    //m_first_hidden_layer[i] = 45 * (m_first_hidden_layer[i] - 0.53);
+                }
             else
                 for (int i = 0; i < input_count; i++)
-                    m_output_layer[i] = Sigmoid(output_layer[i]);
+                {
+                    m_output_layer[i] = Sigmoid(output_layer[i] / 10000);
+                }
         }
 
         private double Sigmoid(double x)
