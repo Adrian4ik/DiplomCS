@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -259,16 +261,21 @@ namespace DiplomCS
         private void Initiate_learning()
         {
             //for (int j = 0; j < 50; j++)
-                for (int i = 0; i < files_count; i++)
-                {
-                    Bitmap pic_rgb = new Bitmap(files_array[0, i]);
-                    Bitmap pic_ndvi = new Bitmap(files_array[0, i].Substring(0, files_array[0, i].Length - 4) + "ndvi" + files_array[2, i] + files_array[3, i] + ".png");
+            for (int i = 0; i < files_count; i++)
+            {
+                Bitmap pic_rgb = new Bitmap(files_array[0, i]);
+                Bitmap pic_ndvi = new Bitmap(files_array[0, i].Substring(0, files_array[0, i].Length - 4) + "ndvi" + files_array[2, i] + files_array[3, i] + ".png");
 
-                    pictureBox1.Image = pic_rgb;
-                    pictureBox2.Image = pic_ndvi;
+                pictureBox1.Image = pic_rgb;
+                pictureBox2.Image = pic_ndvi;
                 
-                    Rects_from_pic(pic_rgb, pic_ndvi);
+                Rects_from_pic(pic_rgb, pic_ndvi);
+                if (i == 460)
+                {
+                    File.WriteAllText("C:\\Users\\user\\Desktop\\Fael.txt", "Последний открытый файл был: " + files_array[1, i]);
+                    Process.GetCurrentProcess().Kill();
                 }
+            }
 
             Pictures_change_elements();
         }
@@ -591,7 +598,7 @@ namespace DiplomCS
         private int[] taken_ans,
                       output_data;
 
-        private const double learning_rate = 0.7; /*precision*/
+        private const double learning_rate = 0.25; /*precision*/
 
         private double[] input_layer,
                          first_hidden_layer,
@@ -605,8 +612,8 @@ namespace DiplomCS
                          error,
                          weights_1_delta,
                          weights_o_delta,
-                         w1,
-                         wo;
+                         w_1,
+                         w_o;
 
         private double[,] weights_1,
                           //weights_2,
@@ -617,8 +624,9 @@ namespace DiplomCS
         {
             input_count = input_size;
             hidden_count = hidden_size;
-            weights_1 = w1;
-            weights_o = wo;
+            W_to_1dim_array(w1, wo);
+            //weights_1 = w1;
+            //weights_o = wo;
 
             input_layer = new double[input_count];
             first_hidden_layer = new double[hidden_count];
@@ -667,6 +675,8 @@ namespace DiplomCS
                     Change_weights(it);
                     it = true;
                 }
+
+                W_to_3dim_array();
             }
 
             return output_data;
@@ -691,14 +701,14 @@ namespace DiplomCS
 
         //Анализ данных---------------//
 
-        private void Fill_next_layer(bool it)
+        private void Fill_next_layer(bool it) // ~10 мс \\ ~5 мс //
         {
             for (int j = 0; j < hidden_count; j++)
                 for (int i = 0; i < input_count; i++)
                     if(it)
-                        first_hidden_layer[j] = first_hidden_layer[j] + input_layer[i] * weights_1[j, i];
+                        first_hidden_layer[j] = first_hidden_layer[j] + input_layer[i] * w_1[j * input_count + i];
                     else
-                        output_layer[i] = output_layer[i] + m_first_hidden_layer[j] * weights_o[j, i];
+                        output_layer[i] = output_layer[i] + m_first_hidden_layer[j] * w_o[j * input_count + i];
         }
 
         private void Output_convertation()
@@ -709,7 +719,7 @@ namespace DiplomCS
 
         //Обучение-----------------//
 
-        private void Error_catching(bool it) // ~20 мс / ~1 мс
+        private void Error_catching(bool it) // ~20 мс/~1 мс \\ ~5 мс/~1 мс //
         {
             if (it)
             {
@@ -717,7 +727,7 @@ namespace DiplomCS
 
                 for (int j = 0; j < hidden_count; j++)
                     for (int i = 0; i < input_count; i++)
-                        error[j] = weights_o[j, i] * weights_o_delta[i];
+                        error[j] = w_o[j * input_count + i] * weights_o_delta[i];
             }
             else
             {
@@ -743,17 +753,43 @@ namespace DiplomCS
                     weights_o_delta[i] = error[i] * m_output_layer[i] * (1 - m_output_layer[i]);
         }
         
-        private void Change_weights(bool it) // ~10 мс / ~20 мс
+        private void Change_weights(bool it) // ~10 мс/~20 мс \\ ~5мс //
         {
             for (int j = 0; j < hidden_count; j++)
                 for (int i = 0; i < input_count; i++)
                     if(it)
-                        weights_1[j, i] = weights_1[j, i] - input_layer[i] * weights_1_delta[j] * learning_rate;
+                        w_1[j * input_count + i] = w_1[j * input_count + i] - input_layer[i] * weights_1_delta[j] * learning_rate;
                     else
-                        weights_o[j, i] = weights_o[j, i] - m_first_hidden_layer[j] * weights_o_delta[i] * learning_rate;
+                        w_o[j * input_count + i] = w_o[j * input_count + i] - m_first_hidden_layer[j] * weights_o_delta[i] * learning_rate;
         }
 
         //Многозадачные функции-------------------------//
+
+        private void W_to_1dim_array(double[,] w1, double[,] wo)
+        {
+            w_1 = new double[input_count * hidden_count];
+            w_o = new double[input_count * hidden_count];
+
+            for (int j = 0, k = 0; j < hidden_count; j++)
+                for(int i = 0; i < input_count; i++, k++)
+                {
+                    w_1[k] = w1[j, i];
+                    w_o[k] = wo[j, i];
+                }
+        }
+
+        private void W_to_3dim_array()
+        {
+            weights_1 = new double[hidden_count, input_count];
+            weights_o = new double[hidden_count, input_count];
+
+            for (int j = 0, k = 0; j < hidden_count; j++)
+                for (int i = 0; i < input_count; i++, k++)
+                {
+                    weights_1[j, i] = w_1[k];
+                    weights_o[j, i] = w_o[k];
+                }
+        }
 
         private void S_activation_function(bool it)
         {
