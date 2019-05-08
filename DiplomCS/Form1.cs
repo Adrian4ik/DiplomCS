@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+//using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
+//using System.Runtime.InteropServices;
+//using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+//using System.Security.Permissions;
+//using System.Text;
+//using System.Threading;
+//using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DiplomCS
@@ -260,21 +260,25 @@ namespace DiplomCS
 
         private void Initiate_learning()
         {
+            int k = 0;
             //for (int j = 0; j < 50; j++)
             for (int i = 0; i < files_count; i++)
             {
+                string ndvi_suf = "ndvi" + files_array[2, i] + files_array[3, i] + ".png",
+                       ndvi_path = files_array[0, i].Substring(0, files_array[0, i].Length - 4) + ndvi_suf;
+
                 Bitmap pic_rgb = new Bitmap(files_array[0, i]);
-                Bitmap pic_ndvi = new Bitmap(files_array[0, i].Substring(0, files_array[0, i].Length - 4) + "ndvi" + files_array[2, i] + files_array[3, i] + ".png");
+                Bitmap pic_ndvi = new Bitmap(ndvi_path);
 
                 pictureBox1.Image = pic_rgb;
                 pictureBox2.Image = pic_ndvi;
                 
                 Rects_from_pic(pic_rgb, pic_ndvi);
-                if (i == 460)
-                {
-                    File.WriteAllText("C:\\Users\\user\\Desktop\\Fael.txt", "Последний открытый файл был: " + files_array[1, i]);
+                
+                File.WriteAllText("C:\\Users\\user\\Desktop\\Fael.txt", "Последний открытый файл был: " + files_array[1, i] + ".png");
+
+                if (files_array[1, i] == "01127")
                     Process.GetCurrentProcess().Kill();
-                }
             }
 
             Pictures_change_elements();
@@ -598,7 +602,7 @@ namespace DiplomCS
         private int[] taken_ans,
                       output_data;
 
-        private const double learning_rate = 0.25; /*precision*/
+        private const double learning_rate = 0.8; /*precision*/
 
         private double[] input_layer,
                          first_hidden_layer,
