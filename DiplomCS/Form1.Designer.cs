@@ -33,7 +33,6 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.Open_directory = new System.Windows.Forms.ToolStripMenuItem();
-            this.Open_ndvi = new System.Windows.Forms.ToolStripMenuItem();
             this.Open_rgb = new System.Windows.Forms.ToolStripMenuItem();
             this.Save_as = new System.Windows.Forms.ToolStripButton();
             this.Save_picture = new System.Windows.Forms.ToolStripButton();
@@ -47,6 +46,8 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -77,7 +78,6 @@
             this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Open_directory,
-            this.Open_ndvi,
             this.Open_rgb});
             this.toolStripButton1.Name = "toolStripButton1";
             this.toolStripButton1.Size = new System.Drawing.Size(67, 22);
@@ -96,15 +96,6 @@
             this.Open_directory.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.Open_directory.Click += new System.EventHandler(this.Open_directory_Click);
             // 
-            // Open_ndvi
-            // 
-            this.Open_ndvi.MergeIndex = 0;
-            this.Open_ndvi.Name = "Open_ndvi";
-            this.Open_ndvi.Size = new System.Drawing.Size(208, 22);
-            this.Open_ndvi.Text = "NDVI файл (обучение)";
-            this.Open_ndvi.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.Open_ndvi.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            // 
             // Open_rgb
             // 
             this.Open_rgb.MergeIndex = 0;
@@ -118,12 +109,12 @@
             // Save_as
             // 
             this.Save_as.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.Save_as.Enabled = false;
             this.Save_as.Image = ((System.Drawing.Image)(resources.GetObject("Save_as.Image")));
             this.Save_as.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Save_as.Name = "Save_as";
             this.Save_as.Size = new System.Drawing.Size(23, 22);
             this.Save_as.Text = "Сохранить как...";
+            this.Save_as.Click += new System.EventHandler(this.Save_as_Click);
             // 
             // Save_picture
             // 
@@ -234,11 +225,23 @@
             this.pictureBox5.TabIndex = 6;
             this.pictureBox5.TabStop = false;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(463, 82);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(121, 23);
+            this.progressBar1.TabIndex = 7;
+            // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 362);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.pictureBox5);
             this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.pictureBox3);
@@ -281,12 +284,13 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton Save_as;
         private System.Windows.Forms.ToolStripMenuItem Open_directory;
-        private System.Windows.Forms.ToolStripMenuItem Open_ndvi;
         private System.Windows.Forms.ToolStripMenuItem Open_rgb;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.PictureBox pictureBox5;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 

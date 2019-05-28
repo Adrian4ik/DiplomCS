@@ -700,6 +700,40 @@ using System.Threading.Tasks;
 
 
 
+                //Picturess.;
+
+                //------------------------------------
+                /*ListView listView = listView1;
+                listView.View = View.Details;
+                int k = 0;
+                Color shaded = Color.FromArgb(240, 240, 240);
+
+                foreach (Product product in products)
+                {
+                    ListViewItem item = new ListViewItem(product.Name);
+                    item.SubItems.Add(product.Version);
+                    item.SubItems.Add(product.Description);
+                    item.SubItems.Add(product.Status);
+                    if (k++ % 2 == 1)
+                    {
+                        item.BackColor = shaded;
+                        item.UseItemStyleForSubItems = true;
+                    }
+                    listView.Items.Add(item);
+                }*/
+                //------------------------------------
+
+
+
+            /*for (int j = 0; j < hidden_count; j++)
+                for (int i = 0; i < input_count; i++)
+                    if(it)
+                        first_hidden_layer[j] = first_hidden_layer[j] + input_layer[i] * w_1[j * input_count + i];
+                    else
+                        output_layer[i] = output_layer[i] + m_first_hidden_layer[j] * w_o[j * input_count + i];*/
+
+
+
 // способы ускорения работы программы:
 // 1 - доработанные GetPixel и SetPixel
 // 2 - указатели
