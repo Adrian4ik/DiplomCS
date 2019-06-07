@@ -732,6 +732,25 @@ using System.Threading.Tasks;
                     else
                         output_layer[i] = output_layer[i] + m_first_hidden_layer[j] * w_o[j * input_count + i];*/
 
+						
+
+                    //bmp.SetPixel(i, j, Color.FromArgb(255, arr[k], arr[k + 1], arr[k + 2]));
+                    //k = k + 3;
+
+
+					
+                        //bmp.SetPixel(i, j, Color.FromArgb(0, 0, 0, 0));
+                    //bmp.SetPixel(i, j, Color.FromArgb(255, rgb_array[k], rgb_array[k + 1], rgb_array[k + 2]));
+                    //k = k + 
+					3;
+                    //ndvi.SetPixel(i, j, clr);
+
+					
+					
+            this.Open_directory.Tag = "";
+            this.Open_rgb.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Open_rgb.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+
 
 
 // способы ускорения работы программы:

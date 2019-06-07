@@ -227,7 +227,7 @@ namespace DiplomCS
             //label1.Location = new Point(ClientSize.Width - label1.Size.Width - 8, 25);
 
             comboBox1.Location = new Point(ClientSize.Width - 129, label1.Location.Y + 18);
-            progressBar1.Location = new Point(ClientSize.Width - 129, comboBox1.Location.Y + 26);
+            //progressBar1.Location = new Point(ClientSize.Width - 129, comboBox1.Location.Y + 26);
 
             label3.Location = new Point(ClientSize.Width - 129, comboBox1.Location.Y + 26);
         }
@@ -249,9 +249,11 @@ namespace DiplomCS
                 pictureBox4.Size = new Size(label1.Location.X / 2 - 44, label1.Location.X / 2 - 44);
             }
 
+            pictureBox5.Size = new Size(1, 1);
             pictureBox2.Location = new Point(pictureBox1.Size.Width + 32, 28);
             pictureBox3.Location = new Point(12, pictureBox1.Size.Height + 48);
             pictureBox4.Location = new Point(pictureBox1.Size.Width + 32, pictureBox1.Size.Height + 48);
+            pictureBox5.Location = new Point(pictureBox1.Size.Width * 2 + 52, pictureBox4.Location.Y);
         }
 
         private void Initiate_learning()
@@ -271,9 +273,10 @@ namespace DiplomCS
 
                 Rects_from_pic(pic_rgb, pic_ndvi);
 
-                if (i == 1 || i == 2 || i == 5 || i == 10 || i == 20 || i == 50 || i == 100 || i == 200 || i == 500 || i == 1000 || i == 2000 || i == 5000 || i == 10000 || i == 20000 || i == 50000)
+                if (i == 0 || i == 1 || i == 2 || i == 5 || i == 10 || i == 20 || i == 50 || i == 100 || i == 200 || i == 500 || i == 1000 || i == 1500 || i == 2000 || i == 2500 || i == 3000 || i == 3500 || i == 4000 || i == 4400 || i == 5000 || i == 10000 || i == 20000 || i == 50000)
                 {
-                    pictureBox4.Image.Save("C:\\Users\\user\\Desktop\\results\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + "x" + h_count + " layer, " + l_rate + " rate, " + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
+                    pictureBox3.Image.Save("C:\\Users\\user\\Desktop\\Diplom\\results\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + "x" + h_count + " layer, " + l_rate + " rate, " + i + " it, " + files_array[1, i] + "(delta).png", ImageFormat.Png);
+                    pictureBox4.Image.Save("C:\\Users\\user\\Desktop\\Diplom\\results\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + "x" + h_count + " layer, " + l_rate + " rate, " + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
                     //pictureBox4.Image.Save("C:\\Users\\user\\Desktop\\results\\" + layers_count + " h_layer\\l_r " + l_rate + "\\" + rect_size + "x" + rect_size + " pxl\\" + h_count + "  h_neurons\\" + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
 
                     //Serializer.Save("C:\\Users\\user\\Desktop\\results\\weights\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + " layer, " + l_rate + " rate, " + i + " w1" + ".bin", w1);
@@ -282,13 +285,12 @@ namespace DiplomCS
 
                 File.WriteAllText("C:\\Users\\user\\Desktop\\Fael.txt", "Последний (" + i + ") открытый файл был: " + files_array[1, i] + ".png");
 
-                //if (files_array[1, i] == "01127")
-                if (i == 4000)
+                if (files_array[1, i] == "14829") // 01127 //if (i == 4490)
                 {
                     //pictureBox3.Image.Save("C:\\Users\\user\\Desktop\\results\\" + layers_count + " h_layer\\l_r " + l_rate + "\\" + rect_size + "x" + rect_size + " pxl\\" + h_count + "  h_neurons\\" + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
                     //pictureBox4.Image.Save("C:\\Users\\user\\Desktop\\results\\" + layers_count + " h_layer\\l_r " + l_rate + "\\" + rect_size + "x" + rect_size + " pxl\\" + h_count + "  h_neurons\\" + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
-                    pictureBox3.Image.Save("C:\\Users\\user\\Desktop\\results\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + "x" + h_count + " layer, " + l_rate + " rate, " + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
-                    pictureBox4.Image.Save("C:\\Users\\user\\Desktop\\results\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + "x" + h_count + " layer, " + l_rate + " rate, " + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
+                    pictureBox3.Image.Save("C:\\Users\\user\\Desktop\\Diplom\\results\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + "x" + h_count + " layer, " + l_rate + " rate, " + i + " it, " + files_array[1, i] + "(delta).png", ImageFormat.Png);
+                    pictureBox4.Image.Save("C:\\Users\\user\\Desktop\\Diplom\\results\\" + rect_size + "x" + rect_size + " pxl, " + layers_count + "x" + h_count + " layer, " + l_rate + " rate, " + i + " it, " + files_array[1, i] + ".png", ImageFormat.Png);
                     Process.GetCurrentProcess().Kill();
                 }
             }
@@ -328,18 +330,14 @@ namespace DiplomCS
                     }
                 }
 
-                int l = 0, d = 0;
-                for (int h = start_y; h < rect_size + start_y; h++)
+                for (int h = start_y, d = 0; h < rect_size + start_y; h++, d++)
                 {
-                    for (int w = start_x; w < rect_size + start_x; w++)
+                    for (int w = start_x, l = 0; w < rect_size + start_x; w++, l++)
                     {
                         res_int[l, d, 0] = res[0, h, w];
                         res_int[l, d, 1] = res[1, h, w];
                         res_int[l, d, 2] = res[2, h, w];
-                        l++;
                     }
-                    l = 0;
-                    d++;
                 }
             }
             finally
@@ -349,7 +347,7 @@ namespace DiplomCS
 
             return res_int;
         }
-        // изменить
+        
         public unsafe Bitmap LBSetPixel(Bitmap bmp, int[,,] arr, int start_x, int start_y)
         {
             int width = bmp.Width, height = bmp.Height;
@@ -395,18 +393,16 @@ namespace DiplomCS
             Bitmap taken_prec = new Bitmap(wd, hd);
 
             w1 = Serializer.Load_w(i_count, h_count, "weights01.bin");
-            if(layers_count >= 2)
+            if (layers_count >= 2)
                 w2 = Serializer.Load_w(i_count, h_count, "weights02.bin");
-            else if(layers_count == 3)
+            else if (layers_count == 3)
                 w3 = Serializer.Load_w(i_count, h_count, "weights03.bin");
             wo = Serializer.Load_w(i_count, h_count, "weights_o.bin");
 
-            progressBar1.Value = 10;
-
-            for (int j = 0; j < hd - rect_size; j++)
-                for (int i = 0; i < wd - rect_size; i++)
+            for (int j = 0; j < hd - rect_size + 1; j++)
+                for (int i = 0; i < wd - rect_size + 1; i++)
                 {
-                    if(pic_ndvi != null)
+                    if (pic_ndvi != null)
                     {
                         s_argb = LBGetPixel(pic_rgb, i, j);
                         s_ndvi = LBGetPixel(pic_ndvi, i, j);
@@ -414,7 +410,7 @@ namespace DiplomCS
 
                     if (layers_count == 1)
                         Nn.Get_weights(w1, wo);
-                    else if(layers_count == 2)
+                    else if (layers_count == 2)
                         Nn.Get_weights(w1, w2, wo);
                     else
                         Nn.Get_weights(w1, w2, w3, wo);
@@ -450,30 +446,29 @@ namespace DiplomCS
             pictureBox3.Image = taken_rgb;
             pictureBox4.Image = taken_ndvi;
 
-            //if (pic_ndvi != null)
-            //{
-                //taken_prec = Calculate_precision((Bitmap)pictureBox2.Image, taken_ndvi);
-                //pictureBox5.Image = taken_prec;
-            //}
+            if (pic_ndvi != null)
+            {
+                taken_prec = Calculate_precision(pic_ndvi, taken_ndvi);
+                pictureBox3.Image = taken_prec;
+            }
         }
         //SetPixel
         private Bitmap Paint_ndvi(Bitmap bmp, int[] arr, int start_x, int start_y)
         {
             Bitmap res = bmp;
-            int //k = 0,
-                end_x = bmp.Width - rect_size + 1,
+            int end_x = bmp.Width - rect_size + 1,
                 end_y = bmp.Height - rect_size + 1;
             int[,,] rgb_arr = Fill_3dim_array(arr);
 
-            for (int j = start_y; j < start_y + rect_size && j < end_y; j++)
-            {
-                for (int i = start_x; i < start_x + rect_size && i < end_x; i++)
-                {
-                    //bmp.SetPixel(i, j, Color.FromArgb(255, arr[k], arr[k + 1], arr[k + 2]));
-                    bmp = LBSetPixel(bmp, rgb_arr, i, j);
-                    //k = k + 3;
-                }
-            }
+            /*for (int j = start_y; j < start_y + rect_size; j++)
+                if (j == end_y)
+                    break;
+                else
+                    for (int i = start_x; i < start_x + rect_size || i < end_x; i++)
+                        if (i == end_x)
+                            break;
+                        else*/
+                            bmp = LBSetPixel(bmp, rgb_arr, start_x, start_y);
 
             return res;
         }
@@ -481,44 +476,74 @@ namespace DiplomCS
         private Bitmap Cut_rgb_image(Bitmap bmp, int[] rgb_array, int[] ndvi_array, int start_x, int start_y)
         {
             Bitmap res = bmp;
-            int end_x = bmp.Width - rect_size + 1,
-                end_y = bmp.Height - rect_size + 1;
+            //int end_x = bmp.Width - rect_size + 1,
+                //end_y = bmp.Height - rect_size + 1; // 50 - 1 + 1 / т.е. диапазон: 0 - 49 // диапазон: 0 - 49
             int[,,] arr = Fill_3dim_array(rgb_array);
+            int[,,] n_a = new int[rect_size, rect_size, 3];
 
-            for (int j = start_y; j < start_y + rect_size && j < end_y; j++)
-            {
-                for (int i = start_x; i < start_x + rect_size && i < end_x; i++)
-                {
-                    //if (ndvi_array[k] != 0 && ndvi_array[k + 1] != 0 && ndvi_array[k + 2] != 0)
-                        bmp = LBSetPixel(bmp, arr, i, j);
-                    //bmp.SetPixel(i, j, Color.FromArgb(0, 0, 0, 0));
-                    //else
-                    //bmp.SetPixel(i, j, Color.FromArgb(255, rgb_array[k], rgb_array[k + 1], rgb_array[k + 2]));
-                    //k = k + 3;
-                }
-            }
+            /*for (int j = start_y, k = 0; j < start_y + rect_size; j++)
+                if (j == end_y)
+                    break;
+                else
+                    for (int i = start_x; i < start_x + rect_size; i++)
+                        if (i == end_x)
+                            break;
+                        else
+                        {
+                            if (ndvi_array[k] == 0 && ndvi_array[k + 1] == 0 && ndvi_array[k + 2] == 0)
+                                bmp = LBSetPixel(bmp, n_a, i, j);
+                            else if (ndvi_array[k] == ndvi_array[k + 2])
+                                bmp = LBSetPixel(bmp, n_a, i, j);
+                            else if (ndvi_array[k + 2] >= 50)
+                                bmp = LBSetPixel(bmp, n_a, i, j);
+                            else
+                                bmp = LBSetPixel(bmp, arr, i, j);
+                        }*/
+
+            if (ndvi_array[0] == 0 && ndvi_array[1] == 0 && ndvi_array[2] == 0)
+                bmp = LBSetPixel(bmp, n_a, start_x, start_y);
+            else if (ndvi_array[0] == ndvi_array[2])
+                bmp = LBSetPixel(bmp, n_a, start_x, start_y);
+            else if (ndvi_array[2] >= 50)
+                bmp = LBSetPixel(bmp, n_a, start_x, start_y);
+            else
+                bmp = LBSetPixel(bmp, arr, start_x, start_y);
 
             return res;
         }
-        // изменить
-        private Bitmap Calculate_precision(Bitmap ndvi, Bitmap ans)
+        //SetPixel
+        private Bitmap Calculate_precision(Bitmap ndvi, Bitmap answer)
         {
-            int wd = ndvi.Width,
-                hd = ndvi.Height;
+            int wd = answer.Width,
+                hd = answer.Height;
             Bitmap res = new Bitmap(wd, hd);
-
-            //DirectBitmap res_dbm = new DirectBitmap(wd, hd);
-            //DirectBitmap ndvi_dbm = new DirectBitmap(ndvi);
-            //DirectBitmap ans_dbm = new DirectBitmap(ans);
 
             for (int j = 0; j < hd; j++)
                 for(int i = 0; i < wd; i++)
                 {
-                    //ndvi.SetPixel(i, j, clr);
+                    int[,,] n = LBGetPixel(ndvi, i, j);
+                    int[,,] a = LBGetPixel(answer, i, j);
+                    int[,,] r = new int[rect_size, rect_size, 3];
+
+                    for(int l = 0; l < rect_size; l++) // пока что расчитано на квадраты размерами 1х1
+                        for(int k = 0; k < rect_size; k++)
+                        {
+                            r[k, l, 0] = a[k, l, 0] - n[k, l, 0];
+                            r[k, l, 1] = a[k, l, 1] - n[k, l, 1];
+                            r[k, l, 2] = a[k, l, 2] - n[k, l, 2];
+
+                            if (r[k, l, 0] < 0)
+                                r[k, l, 0] *= -1;
+                            if (r[k, l, 1] < 0)
+                                r[k, l, 1] *= -1;
+                            if (r[k, l, 2] < 0)
+                                r[k, l, 2] *= -1;
+                            
+                            if (r[k, l, 0] != 0 && r[k, l, 1] != 0 && r[k, l, 2] != 0)
+                                LBSetPixel(res, r, i, j);
+                        }
                 }
-
-            //res = res_dbm.ToBmp();
-
+            
             return res;
         }
 
@@ -527,7 +552,7 @@ namespace DiplomCS
             Nn.Analysis();
         }
 
-        //Многозадачные функции-----------------//
+        //Многозадачные методы------------------//
 
         private int[] Fill_1dim_array(int[,,] arr)
         {
@@ -572,7 +597,7 @@ namespace DiplomCS
         }
 
         //События--------------------------------------------------//
-
+        // исправить
         private void Save_as_Click(object sender, EventArgs e)
         {
             SaveFileDialog SaveF = new SaveFileDialog();
@@ -602,6 +627,12 @@ namespace DiplomCS
             //backgroundWorker1_DoWork(Nn, (DoWorkEventArgs)e);
         }
 
+        private void Open_file_Click(object sender, EventArgs e)
+        {
+            Get_files_list();
+            Enable_dir_elements();
+        }
+        // исправить
         private void Open_rgb_Click(object sender, EventArgs e)
         {
             Get_files_list();
